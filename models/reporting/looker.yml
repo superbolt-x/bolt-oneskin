@@ -65,7 +65,7 @@ models:
       - name: campaign_id
         description: Platform campaign id, or '(not set)'.
       - name: ad_id
-        description: Meta ad id only. '(not set)' for every other platform and for unresolved Meta rows.
+        description: Meta ad id (from utm_term) or Google ad id (from utm_content). '(not set)' otherwise.
       - name: match_level
         description: Deepest object resolved.
         tests:
@@ -75,7 +75,7 @@ models:
         description: Which rule resolved the object, or why it could not be resolved.
         tests:
           - accepted_values:
-              values: ['ad_id_in_term', 'ad_name', 'adset_name', 'seed', 'campaign_name', 'campaign_id',
+              values: ['ad_id_in_term', 'ad_id_in_content', 'ad_name', 'adset_name', 'seed', 'campaign_name', 'campaign_id',
                        'not_set', 'unrendered_placeholder', 'unmatched', 'no_platform_data']
       - name: new_customer_orders
         tests: [not_null]

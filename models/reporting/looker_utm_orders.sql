@@ -16,7 +16,9 @@
                 adset_name     utm_term equals ONE ad set's name
                 seed / campaign_name / campaign_id   campaign only (utm_campaign is a hand-set label that
                                goes stale when a campaign is renamed, so it is the last resort)
-    Google Ads  seed / campaign_id / campaign_name   campaign only. The warehouse has no ad group or ad level.
+    Google Ads  ad_id_in_content  utm_content is the Google ad id ({creative}); seeds/looker_google_ad_map.csv gives its
+                               ad group and campaign (the warehouse has no ad table, see the seed's note)
+                seed / campaign_id / campaign_name   campaign only, used when there is no usable ad id
     TikTok      seed / campaign_name                 campaign only (utm_content matches ad names under 7%)
     Pinterest   no_platform_data  there is no Pinterest connector, so ids and names stay '(not set)'
   Rows that cannot be resolved get '(not set)' and a reason: not_set, unrendered_placeholder (the Google
@@ -161,6 +163,11 @@ meta AS (
 ),
 
 -- ---------------------------------------------------------------- Google Ads
+google_ads AS (
+    SELECT ad_id::VARCHAR AS ad_id, ad_group_id::VARCHAR AS ad_group_id, ad_group_name, campaign_id::VARCHAR AS campaign_id
+    FROM {{ ref('looker_google_ad_map') }}
+),
+
 google_campaigns AS (
     SELECT campaign_id, campaign_name
     FROM (
@@ -184,23 +191,25 @@ google AS (
     SELECT
         u.date, u.channel_grouping, u.channel_subgrouping, u.channel_subgrouping_2,
         u.utm_source, u.utm_medium, u.utm_campaign, u.utm_content, u.utm_term, u.new_customer_orders,
-        COALESCE(sd.campaign_id, ci.campaign_id, cn.campaign_id) AS campaign_id,
+        COALESCE(ga.campaign_id, sd.campaign_id, ci.campaign_id, cn.campaign_id) AS campaign_id,
         gc.campaign_name AS campaign_name,
-        CAST(NULL AS VARCHAR) AS adset_id,
-        CAST(NULL AS VARCHAR) AS adset_name,
-        CAST(NULL AS VARCHAR) AS ad_id,
+        ga.ad_group_id AS adset_id,
+        ga.ad_group_name AS adset_name,
+        ga.ad_id AS ad_id,
         CAST(NULL AS VARCHAR) AS ad_name,
         CASE
+            WHEN ga.ad_id IS NOT NULL THEN 'ad_id_in_content'
             WHEN sd.campaign_id IS NOT NULL THEN 'seed'
             WHEN ci.campaign_id IS NOT NULL THEN 'campaign_id'
             WHEN cn.campaign_id IS NOT NULL THEN 'campaign_name'
             ELSE u.unresolved_reason
         END AS match_method
     FROM utm_flagged u
+    LEFT JOIN google_ads ga ON u.utm_content = ga.ad_id
     LEFT JOIN seed sd ON sd.platform = 'Google Ads' AND sd.utm_campaign_key = u.campaign_key
     LEFT JOIN google_campaigns ci ON u.utm_campaign = ci.campaign_id
     LEFT JOIN google_campaign_by_name cn ON u.campaign_key = cn.campaign_name_key
-    LEFT JOIN google_campaigns gc ON gc.campaign_id = COALESCE(sd.campaign_id, ci.campaign_id, cn.campaign_id)
+    LEFT JOIN google_campaigns gc ON gc.campaign_id = COALESCE(ga.campaign_id, sd.campaign_id, ci.campaign_id, cn.campaign_id)
     WHERE u.channel_grouping = 'Google Ads'
 ),
 

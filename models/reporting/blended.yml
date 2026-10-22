@@ -1,1 +1,62 @@
 version: 2
+
+models:
+  - name: blended_spend
+    description: >
+      Platform spend at the deepest level each platform gives (Meta ad, Google and TikTok campaign) plus one
+      channel-level row a day for Pinterest and TikTok GMV Max from Looker's sheet. Before a platform's own data
+      starts, Looker's channel rows fill the gap (source looker_channel_spend). Half of the blended pair.
+    columns:
+      - name: date
+        tests: [not_null]
+      - name: channel_subgrouping_2
+        description: >
+          Looker's finest channel label. Google comes from seeds/blended_channel_map.csv ('(not mapped)' if a campaign
+          is missing from it). Meta is 'Meta' unless the seed says otherwise.
+      - name: source
+        tests:
+          - accepted_values:
+              values: ['platform_spend', 'looker_channel_spend']
+      - name: spend
+        tests: [not_null]
+
+  - name: blended_conversions
+    description: >
+      Looker last-click new-customer orders summed from looker_utm_orders to the same keys as blended_spend.
+      Orders that could not be tied to a platform object stay, with campaign '(not set)' and match_level 'none'.
+    columns:
+      - name: date
+        tests: [not_null]
+      - name: new_customer_orders
+        tests: [not_null]
+
+  - name: blended
+    description: >
+      blended_spend and blended_conversions stacked with UNION ALL (not joined). Sum spend and new_customer_orders
+      at channel, day and channel_subgrouping_2 level and they always add up. Campaign-level CAC is meaningful only
+      where both a spend row and an order row exist for the campaign.
+    columns:
+      - name: date
+        tests: [not_null]
+      - name: source
+        description: platform_spend, looker_channel_spend or looker_orders.
+        tests:
+          - accepted_values:
+              values: ['platform_spend', 'looker_channel_spend', 'looker_orders']
+      - name: match_level
+        tests:
+          - accepted_values:
+              values: ['ad', 'adset', 'campaign', 'channel', 'none']
+
+  - name: blended_channel_daily
+    description: >
+      The client's Channels Daily panel rebuilt, one row per date and channel_subgrouping_2, with our spend next to
+      Looker's own spend, new customers and Blended CAC so the two can be compared. Panel history older than the
+      platform tables shows with null spend.
+    columns:
+      - name: date
+        tests: [not_null]
+      - name: channel_subgrouping_2
+        tests: [not_null]
+      - name: cac
+        description: Our spend divided by looker_new_customers (the panel's own Blended CAC definition).
