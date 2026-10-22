@@ -16,7 +16,8 @@ models:
       - name: source
         tests:
           - accepted_values:
-              values: ['platform_spend', 'looker_channel_spend']
+              arguments:
+                values: ['platform_spend', 'looker_channel_spend']
       - name: spend
         tests: [not_null]
 
@@ -43,11 +44,13 @@ models:
         description: platform_spend, looker_channel_spend or looker_orders.
         tests:
           - accepted_values:
-              values: ['platform_spend', 'looker_channel_spend', 'looker_orders']
+              arguments:
+                values: ['platform_spend', 'looker_channel_spend', 'looker_orders']
       - name: match_level
         tests:
           - accepted_values:
-              values: ['ad', 'adset', 'campaign', 'channel', 'none']
+              arguments:
+                values: ['ad', 'adset', 'campaign', 'channel', 'none']
 
   - name: blended_channel_daily
     description: >
