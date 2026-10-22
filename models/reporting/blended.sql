@@ -13,7 +13,8 @@
 
   source: platform_spend | looker_channel_spend | looker_orders. Each row fills its own measures and leaves
   the others at 0. match_level: ad | adset | campaign for platform rows; channel for Looker channel totals;
-  ad | adset | campaign | none for orders. Filter channel_subgrouping_2 (e.g. <> 'Spotlights') as needed.
+  ad | adset | campaign | none for orders. Spotlights orders are excluded (var blended_exclude_subgrouping_2);
+  filter channel_subgrouping_2 for anything else.
 #}
 
 SELECT

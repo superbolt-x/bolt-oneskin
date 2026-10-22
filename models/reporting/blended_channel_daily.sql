@@ -11,6 +11,8 @@
     looker_new_customers /     the panel itself (looker_channel_daily), kept next to ours so the two can be compared
     looker_spend / looker_blended_cac
     cac                        spend divided by looker_new_customers, the panel's own definition of Blended CAC
+  Labels in the blended_exclude_subgrouping_2 var (default Spotlights) are left out on both sides. Note the panel's own
+  Meta customer count may still include Spotlights customers; that is Looker's definition, untouched here.
   Full outer join: panel history before the platform tables start (2023-12 for Google, 2022-11 for Meta) still shows
   up, with spend null.
 #}
@@ -43,6 +45,7 @@ panel AS (
         p.blended_cac AS looker_blended_cac
     FROM {{ source('looker_raw', 'looker_channel_daily') }} p
     LEFT JOIN labels l ON l.channel_subgrouping_2 = p.channel
+    WHERE p.channel NOT IN {{ blended_excluded_sub2() }}
 )
 
 SELECT

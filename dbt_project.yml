@@ -24,6 +24,9 @@ vars:
     week_start: 'Monday' # Abbreviation and full name both work
     currency: "USD"
 
+    # Blended vars
+    blended_exclude_subgrouping_2: 'Spotlights' # channel_subgrouping_2 labels kept out of the blended models, e.g. 'Spotlights|Pinterest'; 'dummy' keeps everything
+
     # Googleads vars
     googleads_conversion_used_by_custom_conversions: 'all_conversions'   # Googleads custom conversions can use conversions or all_conversions
 
