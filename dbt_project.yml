@@ -37,6 +37,10 @@ vars:
     financial_status: 'dummy' # include orders with a specific financial status, except if value 'dummy' is left
     canceled_orders: 'included' # include/exclude canceled orders
 
+seeds:
+  bolt_blueprint:
+    +schema: base
+
 models:
   bolt_blueprint:
     base:

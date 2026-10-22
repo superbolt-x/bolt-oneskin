@@ -1,0 +1,81 @@
+version: 2
+
+sources:
+  - name: looker_raw
+    schema: looker_raw
+    description: >
+      OneSkin's Looker numbers (the client's source of truth for new customers). Loaded by the data-engineering
+      scripts looker_email_to_redshift.py (daily, from the Looker "Acquisition Channel Performance - Superbolt"
+      email) and looker_channel_campaign_daily_to_redshift.py (6-hourly, from the client GSheet). Neither is a
+      Fivetran connector, so no integrated transformation runs when they load.
+    tables:
+      - name: looker_channel_daily
+        identifier: looker_channel_daily
+        description: Looker Channels Daily panel, one row per date and channel (new_customers, blended_cac, marketing_spend).
+        loaded_at_field: _loaded_at
+        freshness:
+          warn_after: {count: 36, period: hour}
+          error_after: {count: 72, period: hour}
+        columns:
+          - name: date
+            tests: [not_null]
+          - name: channel
+            tests: [not_null]
+
+      - name: looker_campaign_daily
+        identifier: looker_campaign_daily
+        description: Last-click new-customer orders by date, UTM campaign and channel_subgrouping_2 (no content or term).
+        loaded_at_field: _loaded_at
+        freshness:
+          warn_after: {count: 36, period: hour}
+          error_after: {count: 72, period: hour}
+        columns:
+          - name: date
+            tests: [not_null]
+
+      - name: looker_last_click_utm_daily
+        identifier: looker_last_click_utm_daily
+        description: >
+          Last-click new-customer orders by date, UTM campaign, content, term, source and medium, with Looker's
+          channel grouping, subgrouping and subgrouping 2. Complete since 2024-11-14, except almost no rows from
+          2025-03 to 2025-10, which is a gap in Looker itself.
+        loaded_at_field: _loaded_at
+        freshness:
+          warn_after: {count: 36, period: hour}
+          error_after: {count: 72, period: hour}
+        columns:
+          - name: date
+            tests: [not_null]
+          - name: channel_grouping
+            tests: [not_null]
+          - name: new_customer_orders
+            tests: [not_null]
+
+models:
+  - name: looker_utm_orders
+    description: >
+      Looker last-click new-customer orders tied back to the Meta, Google Ads or TikTok campaign (and, for Meta,
+      ad set and ad) behind each UTM. One row per looker_last_click_utm_daily row, so order totals match the
+      source. Filter channel_subgrouping_2 to include or exclude Spotlights. Unresolved objects read '(not set)'.
+    columns:
+      - name: date
+        tests: [not_null]
+      - name: channel_subgrouping_2
+        description: Looker's finest channel label (Meta, Spotlights, Brand Search, NB PMax, TikTok, Pinterest and so on).
+      - name: campaign_id
+        description: Platform campaign id, or '(not set)'.
+      - name: ad_id
+        description: Meta ad id only. '(not set)' for every other platform and for unresolved Meta rows.
+      - name: match_level
+        description: Deepest object resolved.
+        tests:
+          - accepted_values:
+              values: ['ad', 'adset', 'campaign', 'none']
+      - name: match_method
+        description: Which rule resolved the object, or why it could not be resolved.
+        tests:
+          - accepted_values:
+              values: ['ad_id_in_term', 'ad_name', 'adset_name', 'seed', 'campaign_name', 'campaign_id',
+                       'not_set', 'unrendered_placeholder', 'unmatched', 'no_platform_data']
+      - name: new_customer_orders
+        tests: [not_null]
