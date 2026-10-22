@@ -12,10 +12,11 @@ sources:
       - name: looker_channel_daily
         identifier: looker_channel_daily
         description: Looker Channels Daily panel, one row per date and channel (new_customers, blended_cac, marketing_spend).
-        loaded_at_field: _loaded_at
-        freshness:
-          warn_after: {count: 36, period: hour}
-          error_after: {count: 72, period: hour}
+        config:
+          loaded_at_field: _loaded_at
+          freshness:
+            warn_after: {count: 36, period: hour}
+            error_after: {count: 72, period: hour}
         columns:
           - name: date
             tests: [not_null]
@@ -25,10 +26,11 @@ sources:
       - name: looker_campaign_daily
         identifier: looker_campaign_daily
         description: Last-click new-customer orders by date, UTM campaign and channel_subgrouping_2 (no content or term).
-        loaded_at_field: _loaded_at
-        freshness:
-          warn_after: {count: 36, period: hour}
-          error_after: {count: 72, period: hour}
+        config:
+          loaded_at_field: _loaded_at
+          freshness:
+            warn_after: {count: 36, period: hour}
+            error_after: {count: 72, period: hour}
         columns:
           - name: date
             tests: [not_null]
@@ -39,10 +41,11 @@ sources:
           Last-click new-customer orders by date, UTM campaign, content, term, source and medium, with Looker's
           channel grouping, subgrouping and subgrouping 2. Complete since 2024-11-14, except almost no rows from
           2025-03 to 2025-10, which is a gap in Looker itself.
-        loaded_at_field: _loaded_at
-        freshness:
-          warn_after: {count: 36, period: hour}
-          error_after: {count: 72, period: hour}
+        config:
+          loaded_at_field: _loaded_at
+          freshness:
+            warn_after: {count: 36, period: hour}
+            error_after: {count: 72, period: hour}
         columns:
           - name: date
             tests: [not_null]
@@ -70,12 +73,14 @@ models:
         description: Deepest object resolved.
         tests:
           - accepted_values:
-              values: ['ad', 'adset', 'campaign', 'none']
+              arguments:
+                values: ['ad', 'adset', 'campaign', 'none']
       - name: match_method
         description: Which rule resolved the object, or why it could not be resolved.
         tests:
           - accepted_values:
-              values: ['ad_id_in_term', 'ad_id_in_content', 'ad_name', 'adset_name', 'seed', 'campaign_name', 'campaign_id',
+              arguments:
+                values: ['ad_id_in_term', 'ad_id_in_content', 'ad_name', 'adset_name', 'seed', 'campaign_name', 'campaign_id',
                        'not_set', 'unrendered_placeholder', 'unmatched', 'no_platform_data']
       - name: new_customer_orders
         tests: [not_null]
