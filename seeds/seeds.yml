@@ -1,0 +1,39 @@
+version: 2
+
+# Every column is text: dbt would otherwise guess integer for the platform ids, and Google campaign and ad ids
+# (e.g. 23794929721) overflow a 32-bit integer.
+seeds:
+  - name: looker_utm_campaign_map
+    description: UTM campaign exceptions that name matching cannot resolve (Meta, Google Ads, TikTok) -> platform campaign id.
+    config:
+      column_types:
+        platform: varchar(64)
+        utm_campaign_key: varchar(512)
+        campaign_id: varchar(64)
+        note: varchar(1024)
+
+  - name: looker_google_ad_map
+    description: >
+      Google ad id (the UTM content, {creative}) -> ad group and campaign, pulled from the Google Ads API on 2026-10-22.
+      A snapshot: ads created later are missing until it is refreshed or the Fivetran ad_history table is switched on.
+    config:
+      column_types:
+        ad_id: varchar(64)
+        ad_type: varchar(64)
+        ad_group_id: varchar(64)
+        ad_group_name: varchar(512)
+        campaign_id: varchar(64)
+        note: varchar(1024)
+
+  - name: blended_channel_map
+    description: >
+      Platform campaign -> Looker's channel_subgrouping and channel_subgrouping_2. Google needs one row per campaign;
+      Meta and TikTok default to 'Meta' / 'TikTok' unless a row overrides them (that is where a Spotlights split goes).
+    config:
+      column_types:
+        platform: varchar(64)
+        campaign_id: varchar(64)
+        channel_subgrouping: varchar(64)
+        channel_subgrouping_2: varchar(64)
+        campaign_name: varchar(512)
+        note: varchar(1024)

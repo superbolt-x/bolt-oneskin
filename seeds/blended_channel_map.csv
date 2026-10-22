@@ -1,0 +1,41 @@
+platform,campaign_id,channel_subgrouping,channel_subgrouping_2,campaign_name,note
+Google Ads,20772787914,Non-Branded,NB Search,Search_NB_Competitors_US,SEARCH
+Google Ads,20775879510,Non-Branded,NB Search,WSI | Video | Prospecting | Max Conv | USA,VIDEO (Looker files YouTube/Display under Search)
+Google Ads,20779103681,Branded,Brand Search,Search_Brand_Core_US,SEARCH
+Google Ads,20779103684,Non-Branded,NB Search,Search_NB_Core_US,SEARCH
+Google Ads,20783068075,Non-Branded,NB Demand Gen,WSI | Demand Gen - Prospecting | USA | Max Conv | CA - Competitor URLs,DEMAND_GEN
+Google Ads,20783068219,Non-Branded,NB Demand Gen,WSI | Demand Gen - Remarketing | USA | Max Conv,DEMAND_GEN
+Google Ads,20786099740,Non-Branded,NB PMax,PMax_All Products_US,PERFORMANCE_MAX
+Google Ads,20786100148,Non-Branded,NB Search,WSI | Video | Remarketing | Max Conv | USA,VIDEO (Looker files YouTube/Display under Search)
+Google Ads,20790132613,Branded,Brand Shopping,Shopping_Brand_All Products_US,SHOPPING
+Google Ads,21158795746,Non-Branded,NB Search,Search_NB_DSA,SEARCH
+Google Ads,21211349958,Non-Branded,NB PMax,PMax_NB_BODY_US,PERFORMANCE_MAX
+Google Ads,21219171017,Non-Branded,NB PMax,PMax_NB_SHIELD+PREP_US,PERFORMANCE_MAX
+Google Ads,21222043435,Non-Branded,NB PMax,PMax_NB_FACE_US,PERFORMANCE_MAX
+Google Ads,21222044047,Non-Branded,NB PMax,PMax_NB_EYE_US,PERFORMANCE_MAX
+Google Ads,21222046549,Non-Branded,NB PMax,PMax_NB_BUNDLES_US,PERFORMANCE_MAX
+Google Ads,21258915358,Non-Branded,NB Search,Search_NB_MothersDay_US,SEARCH
+Google Ads,21354493127,Branded,Brand Search,Search_Brand_Core_US | BM w/ Brand Restriction Test,SEARCH
+Google Ads,21358325473,Branded,Brand PMax,PMax: Shopping_Brand_All Products_US,PERFORMANCE_MAX
+Google Ads,21530152275,Non-Branded,NB Search,Video_Prospecting_NB_In-Stream,VIDEO (Looker files YouTube/Display under Search)
+Google Ads,21539223048,Non-Branded,NB Search,Video_Prospecting_NB_Shorts,VIDEO (Looker files YouTube/Display under Search)
+Google Ads,21551504830,Branded,Brand Search,Video_Retargeting_Brand_All,VIDEO (Looker files YouTube/Display under Search)
+Google Ads,21557549727,Non-Branded,NB Search,Search_NB_DSA_Shoppable Pages,SEARCH
+Google Ads,21617670381,Non-Branded,NB Search,Search_NB_Traditional-Core_US,SEARCH
+Google Ads,21693794609,Non-Branded,NB Demand Gen,Demand Gen_LAL_US,DEMAND_GEN
+Google Ads,21932000055,Non-Branded,NB PMax,PMax_Holiday/BFCM_US,PERFORMANCE_MAX
+Google Ads,21938299366,Non-Branded,NB Search,Display_Retargeting_Holiday/BFCM 2024_US,DISPLAY (Looker files YouTube/Display under Search)
+Google Ads,21982194655,Non-Branded,NB Shopping,Shopping_NB_All Products_US,SHOPPING
+Google Ads,22393414701,Non-Branded,NB PMax,PMax_US_OS-01 HAIR_Launch,PERFORMANCE_MAX
+Google Ads,22512345960,Non-Branded,NB Search,NB_Search_HAIR,SEARCH
+Google Ads,22900796807,Non-Branded,NB Search,NB_Search_HAIR-Core,SEARCH
+Google Ads,22904939974,Non-Branded,NB Search,NB_Search_BODY-Core,SEARCH
+Google Ads,23494210243,Non-Branded,NB Shopping,[SB] Shopping_NB_Lip_US,SHOPPING
+Google Ads,23494622773,Non-Branded,NB PMax,[SB] PMax_FeedOnly_NB_All Products_US,PERFORMANCE_MAX
+Google Ads,23686718870,Non-Branded,NB PMax,[SB] PMax_All Products_US_MaxConv,PERFORMANCE_MAX
+Google Ads,23757164784,Non-Branded,NB Search,[SB] Search_NB_Body_US,SEARCH
+Google Ads,23794929721,Non-Branded,NB PMax,[SB] PMax_FeedOnly_NB_All Products_US_V2_April26,PERFORMANCE_MAX
+Google Ads,23826225999,Non-Branded,NB Demand Gen,[SB] Demand Gen_All Products_US_MaxConv,DEMAND_GEN
+Google Ads,23835721843,Non-Branded,NB Search,[SB] Search_NB_Hair_US,SEARCH
+Google Ads,24006117060,Non-Branded,NB PMax,[SB] PMax_FeedOnly_NB_US_V3_July26,PERFORMANCE_MAX
+Google Ads,24032931313,Non-Branded,NB Search,[SB] Search_NB_Face_US,SEARCH
