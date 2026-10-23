@@ -54,6 +54,21 @@ sources:
           - name: new_customer_orders
             tests: [not_null]
 
+      - name: google_ad_map
+        identifier: google_ad_map
+        description: >
+          Every Google Ads ad (ad id = the UTM content, {creative}) with its ad group and campaign, one row per ad.
+          Rebuilt daily from the Google Ads API by google_ad_map_to_redshift.py (not Fivetran, to avoid the cost of
+          the connector's ad tables). Keeps one campaign per ad when an ad also sits in an experiment copy.
+        config:
+          loaded_at_field: _loaded_at
+          freshness:
+            warn_after: {count: 36, period: hour}
+            error_after: {count: 72, period: hour}
+        columns:
+          - name: ad_id
+            tests: [not_null]
+
 models:
   - name: looker_utm_orders
     description: >
