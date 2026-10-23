@@ -16,8 +16,9 @@
                 adset_name     utm_term equals ONE ad set's name
                 seed / campaign_name / campaign_id   campaign only (utm_campaign is a hand-set label that
                                goes stale when a campaign is renamed, so it is the last resort)
-    Google Ads  ad_id_in_content  utm_content is the Google ad id ({creative}); seeds/looker_google_ad_map.csv gives its
-                               ad group and campaign (the warehouse has no ad table, see the seed's note)
+    Google Ads  ad_id_in_content  utm_content is the Google ad id ({creative}); looker_raw.google_ad_map gives its
+                               ad group and campaign, from looker_raw.google_ad_map (rebuilt daily from the Google Ads API by
+                               google_ad_map_to_redshift.py; the Fivetran connector's ad tables are off on purpose)
                 seed / campaign_id / campaign_name   campaign only, used when there is no usable ad id
     TikTok      seed / campaign_name                 campaign only (utm_content matches ad names under 7%)
     Pinterest   no_platform_data  there is no Pinterest connector, so ids and names stay '(not set)'
@@ -165,7 +166,7 @@ meta AS (
 -- ---------------------------------------------------------------- Google Ads
 google_ads AS (
     SELECT ad_id::VARCHAR AS ad_id, ad_group_id::VARCHAR AS ad_group_id, ad_group_name, campaign_id::VARCHAR AS campaign_id
-    FROM {{ ref('looker_google_ad_map') }}
+    FROM {{ source('looker_raw', 'google_ad_map') }}
 ),
 
 google_campaigns AS (

@@ -12,19 +12,6 @@ seeds:
         campaign_id: varchar(64)
         note: varchar(1024)
 
-  - name: looker_google_ad_map
-    description: >
-      Google ad id (the UTM content, {creative}) -> ad group and campaign, pulled from the Google Ads API on 2026-10-22.
-      A snapshot: ads created later are missing until it is refreshed or the Fivetran ad_history table is switched on.
-    config:
-      column_types:
-        ad_id: varchar(64)
-        ad_type: varchar(64)
-        ad_group_id: varchar(64)
-        ad_group_name: varchar(512)
-        campaign_id: varchar(64)
-        note: varchar(1024)
-
   - name: blended_channel_map
     description: >
       Platform campaign -> Looker's channel_subgrouping and channel_subgrouping_2. Google needs one row per campaign;
