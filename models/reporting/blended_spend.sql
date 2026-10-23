@@ -11,9 +11,12 @@
     Google Ads  campaign level. channel_subgrouping / _2 come from seeds/blended_channel_map.csv, because the
                 platform has no Branded / Non-Branded or PMax / Search label of its own
     TikTok      campaign level
-    Pinterest and TikTok GMV Max
-                one channel-level row a day from Looker's own sheet (looker_channel_daily): there is no
-                platform connector for either, so campaign, ad set and ad stay '(not set)'
+    TikTok GMV Max
+                campaign level, from looker_raw.tiktok_gmv_max_daily (TikTok Business API, loaded by
+                tiktok_gmv_max_to_redshift.py): the connector's tables do not carry it. Spend only; Looker
+                attributes no new customers to it.
+    Pinterest   one channel-level row a day from Looker's own sheet (looker_channel_daily): there is no platform
+                connector, so campaign, ad set and ad stay '(not set)'
     Before a platform's own data starts (Meta 2022-11, Google 2023-12, TikTok 2025-01) the same Looker channel
     rows fill the gap, so spend history is complete. They carry source = 'looker_channel_spend'; on and after the
     platform's first date only platform spend is used, so nothing is counted twice.
@@ -153,12 +156,35 @@ tiktok_spend AS (
     LEFT JOIN channel_map m ON m.platform = 'TikTok' AND m.campaign_id = s.campaign_id
 ),
 
+-- ---------------------------------------------------------------- TikTok GMV Max (API table)
+gmv_max_spend AS (
+    SELECT
+        g.date::DATE AS date,
+        'TikTok' AS channel_grouping,
+        'TikTok' AS channel_subgrouping,
+        'TikTok GMV Max' AS channel_subgrouping_2,
+        g.campaign_id,
+        COALESCE(c.campaign_name, g.campaign_name) AS campaign_name,
+        CAST(NULL AS VARCHAR) AS adset_id,
+        CAST(NULL AS VARCHAR) AS adset_name,
+        CAST(NULL AS VARCHAR) AS ad_id,
+        CAST(NULL AS VARCHAR) AS ad_name,
+        'platform_spend' AS source,
+        'campaign' AS match_level,
+        g.cost AS spend,
+        0 AS impressions,
+        0 AS clicks
+    FROM {{ source('looker_raw', 'tiktok_gmv_max_daily') }} g
+    LEFT JOIN {{ source('looker_raw', 'tiktok_gmv_max_campaigns') }} c ON c.campaign_id = g.campaign_id
+    WHERE g.cost > 0
+),
+
 -- ---------------------------------------------------------------- channels with no platform data
 looker_channel_spend AS (
     SELECT
         date,
-        CASE channel WHEN 'Pinterest' THEN 'Pinterest' ELSE 'TikTok' END AS channel_grouping,
-        CASE channel WHEN 'Pinterest' THEN 'Pinterest' ELSE 'TikTok' END AS channel_subgrouping,
+        'Pinterest' AS channel_grouping,
+        'Pinterest' AS channel_subgrouping,
         channel AS channel_subgrouping_2,
         CAST(NULL AS VARCHAR) AS campaign_id,
         CAST(NULL AS VARCHAR) AS campaign_name,
@@ -172,7 +198,7 @@ looker_channel_spend AS (
         0 AS impressions,
         0 AS clicks
     FROM {{ source('looker_raw', 'looker_channel_daily') }}
-    WHERE channel IN ('Pinterest', 'TikTok GMV Max')
+    WHERE channel = 'Pinterest'
       AND marketing_spend IS NOT NULL
 ),
 
@@ -212,6 +238,7 @@ stacked AS (
     SELECT * FROM meta_spend
     UNION ALL SELECT * FROM google_spend
     UNION ALL SELECT * FROM tiktok_spend
+    UNION ALL SELECT * FROM gmv_max_spend
     UNION ALL SELECT * FROM looker_channel_spend
     UNION ALL SELECT * FROM looker_history
 )
