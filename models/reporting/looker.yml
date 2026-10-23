@@ -69,6 +69,30 @@ sources:
           - name: ad_id
             tests: [not_null]
 
+      - name: tiktok_gmv_max_daily
+        identifier: tiktok_gmv_max_daily
+        description: >
+          TikTok GMV Max cost, TikTok Shop orders and gross revenue by campaign and day, from the TikTok Business API
+          (tiktok_gmv_max_to_redshift.py, daily, last 7 days replaced). Only days with cost or orders have a row, so
+          this table has no freshness check: it legitimately goes quiet when GMV Max is paused (Feb to Oct 2026).
+        columns:
+          - name: date
+            tests: [not_null]
+          - name: campaign_id
+            tests: [not_null]
+
+      - name: tiktok_gmv_max_campaigns
+        identifier: tiktok_gmv_max_campaigns
+        description: GMV Max campaign names and status, fully replaced by every run of tiktok_gmv_max_to_redshift.py.
+        config:
+          loaded_at_field: _loaded_at
+          freshness:
+            warn_after: {count: 36, period: hour}
+            error_after: {count: 72, period: hour}
+        columns:
+          - name: campaign_id
+            tests: [not_null]
+
 models:
   - name: looker_utm_orders
     description: >
