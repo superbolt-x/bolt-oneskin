@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: shopify_raw
+    schema: shopify_raw
+    tables:
+      - name: analytics_sales_by_order_day
+        description: >
+          Shopify Analytics sales by order and day (ShopifyQL), written by the server pipeline
+          elt/sources/shopify.py. The last 3 days are re-pulled every run; history from 2020-10-21.
+
+models:
+  - name: shopify_sales_analytics
+    description: >
+      Shopify Analytics' own sales (gross, discounts, returns, net, shipping, taxes, total) by
+      day / week / month / quarter / year. Edits, exchanges and returns land on the day they happen,
+      so it matches Shopify's reports; revenue = net_sales + shipping_charges.
+    columns:
+      - name: unique_key
+        tests:
+          - unique
+          - not_null
